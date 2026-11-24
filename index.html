@@ -1,0 +1,2297 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ISTQB CTFL v4.0 — Hệ Thống Luyện Đề & Học Thuộc</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --bg-canvas: #F6F5F0;
+      --bg-sidebar: #EFECE6;
+      --bg-surface: #FFFFFF;
+      --bg-surface-hover: #FAF9F5;
+      --bg-subtle: #F2EFE9;
+      --bg-explain: #FAF8F3;
+      --bg-kbd: #ECEAE3;
+
+      --text-primary: #141413;
+      --text-secondary: #52514E;
+      --text-muted: #85837D;
+      --text-on-accent: #FFFFFF;
+
+      --border-hairline: #E3E0D8;
+      --border-strong: #C9C5BA;
+      --border-focus: #141413;
+
+      --accent-primary: #18181B;
+      --accent-brand: #C84B31;
+      --accent-brand-soft: #FDF3F1;
+
+      --state-correct: #15803D;
+      --state-correct-bg: #F0FDF4;
+      --state-correct-border: #86EFAC;
+
+      --state-wrong: #B91C1C;
+      --state-wrong-bg: #FEF2F2;
+      --state-wrong-border: #FCA5A5;
+
+      --state-warn: #B45309;
+      --state-warn-bg: #FFFBEB;
+      --state-warn-border: #FDE68A;
+
+      --shadow-card: 0 1px 2px rgba(20, 20, 19, 0.04), 0 6px 20px -4px rgba(20, 20, 19, 0.05);
+      --shadow-float: 0 12px 32px -4px rgba(20, 20, 19, 0.12), 0 2px 6px rgba(20, 20, 19, 0.06);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+
+    [data-theme="dark"] {
+      --bg-canvas: #0D0E11;
+      --bg-sidebar: #121419;
+      --bg-surface: #171920;
+      --bg-surface-hover: #1D2029;
+      --bg-subtle: #1F222B;
+      --bg-explain: #14161C;
+      --bg-kbd: #252833;
+
+      --text-primary: #ECECEF;
+      --text-secondary: #A2A5B3;
+      --text-muted: #686C7D;
+      --text-on-accent: #0D0E11;
+
+      --border-hairline: #252834;
+      --border-strong: #373B4D;
+      --border-focus: #ECECEF;
+
+      --accent-primary: #ECECEF;
+      --accent-brand: #E26348;
+      --accent-brand-soft: rgba(226, 99, 72, 0.14);
+
+      --state-correct: #4ADE80;
+      --state-correct-bg: rgba(22, 163, 74, 0.14);
+      --state-correct-border: rgba(74, 222, 128, 0.35);
+
+      --state-wrong: #F87171;
+      --state-wrong-bg: rgba(220, 38, 38, 0.14);
+      --state-wrong-border: rgba(248, 113, 113, 0.35);
+
+      --state-warn: #FBBF24;
+      --state-warn-bg: rgba(217, 119, 6, 0.14);
+      --state-warn-border: rgba(251, 191, 36, 0.35);
+
+      --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -4px rgba(0, 0, 0, 0.35);
+      --shadow-float: 0 16px 40px -4px rgba(0, 0, 0, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Typography helpers */
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-variant-numeric: tabular-nums;
+    }
+    .serif-title {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+    }
+
+    /* Layout: Sidebar + Main Workspace + Right Navigator */
+    .sidebar {
+      width: 310px;
+      min-width: 310px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-hairline);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      user-select: none;
+      transition: transform 0.2s ease;
+    }
+
+    .brand-header {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--border-hairline);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-title-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .brand-mark {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      background: var(--accent-brand);
+      display: inline-block;
+    }
+
+    .brand-name {
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .brand-version {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--bg-kbd);
+      color: var(--text-secondary);
+    }
+
+    /* Dataset Scope Bar in Sidebar */
+    .scope-panel {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-hairline);
+      background: var(--bg-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .scope-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .pill-switch {
+      display: flex;
+      background: var(--bg-kbd);
+      padding: 2px;
+      border-radius: 6px;
+      border: 1px solid var(--border-hairline);
+    }
+
+    .pill-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .pill-btn.active {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+
+    .toggle-check {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .toggle-check input {
+      accent-color: var(--accent-brand);
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+
+    /* Sidebar Navigation Tabs */
+    .nav-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 10px 16px 6px;
+      gap: 4px;
+    }
+
+    .nav-tab {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 6px 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .nav-tab:hover {
+      color: var(--text-primary);
+      background: var(--bg-subtle);
+    }
+
+    .nav-tab.active {
+      color: var(--text-primary);
+      background: var(--bg-surface);
+      border-color: var(--border-hairline);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    /* Sidebar Scrollable List */
+    .nav-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 12px 20px;
+    }
+
+    .nav-section-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      padding: 14px 8px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-item {
+      width: 100%;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: inherit;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 2px;
+      transition: all 0.12s ease;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border-color: var(--border-hairline);
+      font-weight: 600;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+
+    .nav-item-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .nav-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border-strong);
+      flex-shrink: 0;
+    }
+
+    .nav-item.active .nav-dot {
+      background: var(--accent-brand);
+    }
+
+    .nav-dot.done {
+      background: var(--state-correct);
+    }
+
+    .nav-item-title {
+      font-size: 12.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-badge {
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: var(--bg-kbd);
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    /* Main Content Area */
+    .main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Top Command Bar */
+    .topbar {
+      height: 60px;
+      min-height: 60px;
+      padding: 0 28px;
+      border-bottom: 1px solid var(--border-hairline);
+      background: var(--bg-surface);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .current-set-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .set-meta-pill {
+      font-size: 11.5px;
+      padding: 3px 9px;
+      border-radius: 99px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .topbar-center {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mode-segmented {
+      display: flex;
+      background: var(--bg-subtle);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--border-hairline);
+    }
+
+    .mode-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .mode-btn.active {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .action-btn {
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 7px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .action-btn:hover {
+      background: var(--bg-surface-hover);
+      border-color: var(--border-strong);
+    }
+
+    .action-btn.primary {
+      background: var(--accent-primary);
+      color: var(--text-on-accent);
+      border-color: var(--accent-primary);
+    }
+
+    .action-btn.primary:hover {
+      opacity: 0.92;
+    }
+
+    .action-btn.brand {
+      background: var(--accent-brand);
+      color: #FFFFFF;
+      border-color: var(--accent-brand);
+    }
+
+    /* Sub-toolbar: Search, Filters & Progress Summary */
+    .subbar {
+      padding: 10px 28px;
+      border-bottom: 1px solid var(--border-hairline);
+      background: var(--bg-canvas);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      max-width: 340px;
+      min-width: 200px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 6px 12px 6px 30px;
+      font-family: inherit;
+      font-size: 12.5px;
+      border: 1px solid var(--border-hairline);
+      border-radius: 7px;
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .search-input:focus {
+      border-color: var(--border-focus);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    .filter-chips {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 11.5px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+
+    .chip:hover {
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
+
+    .chip.active {
+      background: var(--accent-primary);
+      color: var(--text-on-accent);
+      border-color: var(--accent-primary);
+      font-weight: 600;
+    }
+
+    .stats-inline {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .stat-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+
+    /* Workspace Body: Content + Optional Right Question Grid */
+    .workspace-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .questions-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 32px 80px;
+      scroll-behavior: smooth;
+    }
+
+    .questions-container {
+      max-width: 820px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    /* Exam Timer Banner (when in Exam Form mode) */
+    .exam-banner {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-left: 4px solid var(--accent-brand);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-card);
+    }
+
+    .exam-timer {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent-brand);
+    }
+
+    /* Score Summary Banner */
+    .score-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      box-shadow: var(--shadow-card);
+      display: none;
+    }
+
+    .score-card.visible {
+      display: block;
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .score-metric {
+      padding: 12px 14px;
+      background: var(--bg-subtle);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-hairline);
+    }
+
+    .score-metric-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .score-metric-val {
+      font-size: 22px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    /* Question Card Design */
+    .q-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      box-shadow: var(--shadow-card);
+      transition: border-color 0.15s;
+      position: relative;
+    }
+
+    .q-card.answered-correct {
+      border-color: var(--state-correct-border);
+    }
+
+    .q-card.answered-wrong {
+      border-color: var(--state-wrong-border);
+    }
+
+    .q-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .q-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .q-index-badge {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 5px;
+      background: var(--accent-primary);
+      color: var(--text-on-accent);
+    }
+
+    .q-meta-tag {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 5px;
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-hairline);
+    }
+
+    .q-meta-tag.bonus {
+      background: var(--state-warn-bg);
+      color: var(--state-warn);
+      border-color: var(--state-warn-border);
+    }
+
+    .q-meta-tag.multi-tag {
+      background: var(--accent-brand-soft);
+      color: var(--accent-brand);
+      font-weight: 600;
+    }
+
+    .q-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .icon-btn {
+      border: 1px solid var(--border-hairline);
+      background: transparent;
+      color: var(--text-muted);
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all 0.12s;
+    }
+
+    .icon-btn:hover {
+      color: var(--text-primary);
+      background: var(--bg-subtle);
+    }
+
+    .icon-btn.starred {
+      color: #D97706;
+      background: var(--state-warn-bg);
+      border-color: var(--state-warn-border);
+    }
+
+    .q-stem {
+      font-size: 15.5px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.65;
+      margin-bottom: 16px;
+      white-space: pre-line;
+    }
+
+    /* Cropped PDF Figures / Tables */
+    .q-figures {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .q-figure-wrap {
+      background: #FFFFFF;
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      text-align: center;
+      overflow-x: auto;
+    }
+
+    .q-figure-wrap img {
+      max-width: 100%;
+      height: auto;
+      max-height: 440px;
+      object-fit: contain;
+      border-radius: 4px;
+      cursor: zoom-in;
+    }
+
+    /* Options List */
+    .q-options {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .opt-item {
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-surface);
+      border-radius: var(--radius-md);
+      padding: 12px 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: all 0.12s ease;
+      text-align: left;
+      width: 100%;
+      font-family: inherit;
+      color: var(--text-primary);
+    }
+
+    .opt-item:hover:not(.locked) {
+      background: var(--bg-surface-hover);
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    .opt-key {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      background: var(--bg-kbd);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+      text-transform: uppercase;
+    }
+
+    .opt-content {
+      flex: 1;
+      font-size: 14.5px;
+      line-height: 1.55;
+    }
+
+    .opt-content img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin-top: 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-hairline);
+      background: #fff;
+      padding: 6px;
+    }
+
+    /* Selected in Exam mode (before grading) */
+    .opt-item.selected-pending {
+      border-color: var(--accent-primary);
+      background: var(--bg-subtle);
+    }
+
+    .opt-item.selected-pending .opt-key {
+      background: var(--accent-primary);
+      color: var(--text-on-accent);
+      border-color: var(--accent-primary);
+    }
+
+    /* Graded Correct Option */
+    .opt-item.is-correct {
+      background: var(--state-correct-bg);
+      border-color: var(--state-correct-border);
+    }
+
+    .opt-item.is-correct .opt-key {
+      background: var(--state-correct);
+      color: #FFFFFF;
+      border-color: var(--state-correct);
+    }
+
+    /* Graded Wrong User Selection */
+    .opt-item.is-wrong {
+      background: var(--state-wrong-bg);
+      border-color: var(--state-wrong-border);
+    }
+
+    .opt-item.is-wrong .opt-key {
+      background: var(--state-wrong);
+      color: #FFFFFF;
+      border-color: var(--state-wrong);
+    }
+
+    .opt-status-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-left: auto;
+      flex-shrink: 0;
+      align-self: center;
+    }
+
+    .opt-status-tag.correct {
+      color: var(--state-correct);
+      background: var(--state-correct-bg);
+    }
+
+    .opt-status-tag.wrong {
+      color: var(--state-wrong);
+      background: var(--state-wrong-bg);
+    }
+
+    /* Explanation Box */
+    .q-explain {
+      margin-top: 16px;
+      padding: 16px 18px;
+      background: var(--bg-explain);
+      border: 1px solid var(--border-hairline);
+      border-left: 3px solid var(--state-correct);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-primary);
+      display: none;
+    }
+
+    .q-explain.visible {
+      display: block;
+      animation: fadeIn 0.18s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .explain-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--state-correct);
+    }
+
+    .explain-body {
+      white-space: pre-line;
+      color: var(--text-primary);
+    }
+
+    .explain-ref {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border-hairline);
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Flashcard Single-Question Navigation Bar */
+    .single-nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .kbd-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    kbd {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--bg-kbd);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+    }
+
+    /* Right Question Map Panel */
+    .right-panel {
+      width: 250px;
+      min-width: 250px;
+      background: var(--bg-sidebar);
+      border-left: 1px solid var(--border-hairline);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+    }
+
+    .panel-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .q-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+
+    .q-grid-btn {
+      height: 32px;
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.12s;
+      position: relative;
+    }
+
+    .q-grid-btn:hover {
+      border-color: var(--border-focus);
+      color: var(--text-primary);
+    }
+
+    .q-grid-btn.current {
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 1px;
+    }
+
+    .q-grid-btn.correct {
+      background: var(--state-correct-bg);
+      color: var(--state-correct);
+      border-color: var(--state-correct-border);
+    }
+
+    .q-grid-btn.wrong {
+      background: var(--state-wrong-bg);
+      color: var(--state-wrong);
+      border-color: var(--state-wrong-border);
+    }
+
+    .q-grid-btn.pending {
+      background: var(--bg-kbd);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+
+    .q-grid-btn.starred::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #D97706;
+    }
+
+    /* Modals (Google Forms Exporter & Image Lightbox) */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 16, 18, 0.55);
+      backdrop-filter: blur(3px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 780px;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-float);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-hairline);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-body {
+      padding: 20px 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .code-area {
+      width: 100%;
+      height: 280px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-hairline);
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+      resize: vertical;
+      outline: none;
+    }
+
+    .steps-guide {
+      background: var(--bg-explain);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    @media (max-width: 1100px) {
+      .right-panel {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand-header">
+      <div class="brand-title-wrap">
+        <span class="brand-mark"></span>
+        <span class="brand-name">ISTQB Studio</span>
+        <span class="brand-version mono">CTFL v4.0</span>
+      </div>
+      <button class="icon-btn" id="themeToggleBtn" title="Đổi giao diện Sáng / Tối">◐</button>
+    </div>
+
+    <!-- Dataset Scope Switcher (565 Core vs 610 Full + Deduplication) -->
+    <div class="scope-panel">
+      <div class="scope-row">
+        <span style="font-weight:600">Nguồn câu hỏi:</span>
+        <span class="mono" id="totalPoolCount">565 câu</span>
+      </div>
+      <div class="pill-switch">
+        <button class="pill-btn active" id="scope565Btn" onclick="setDatasetScope('core565')">Chuẩn 565 câu Thầy</button>
+        <button class="pill-btn" id="scope610Btn" onclick="setDatasetScope('full610')">Full 610 (+45 bổ sung)</button>
+      </div>
+      <label class="toggle-check">
+        <input type="checkbox" id="dedupCheckbox" onchange="toggleDedup(this.checked)" />
+        <span>Ẩn các câu trùng lặp giữa các đề</span>
+      </label>
+    </div>
+
+    <!-- Navigation Category Tabs -->
+    <div class="nav-tabs">
+      <button class="nav-tab active" id="tabExams" onclick="switchSidebarTab('exams')">17 Bộ Đề</button>
+      <button class="nav-tab" id="tabChapters" onclick="switchSidebarTab('chapters')">6 Chương</button>
+      <button class="nav-tab" id="tabSmart" onclick="switchSidebarTab('smart')">Luyện Thông Minh</button>
+    </div>
+
+    <!-- Scrollable List of Sets -->
+    <div class="nav-list" id="sidebarList"></div>
+  </aside>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="main-area">
+    <!-- Top Command Bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="current-set-title" id="currentSetTitle">Đề thi thử 01 (Giải chi tiết TV)</h1>
+        <span class="set-meta-pill mono" id="currentSetMeta">39 câu</span>
+      </div>
+
+      <div class="topbar-center">
+        <div class="mode-segmented">
+          <button class="mode-btn active" id="modeStudyBtn" onclick="setStudyMode('study')" title="Chọn đáp án chấm điểm & mở giải thích ngay">Học thuộc nhanh</button>
+          <button class="mode-btn" id="modeSingleBtn" onclick="setStudyMode('single')" title="Tập trung từng câu một kèm phím tắt 1-4, Space, Mũi tên">Flashcard 1 câu</button>
+          <button class="mode-btn" id="modeExamBtn" onclick="setStudyMode('exam')" title="Làm bài như Google Form / Thi thật, nộp bài mới chấm điểm">Làm Form Thi thử</button>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <button class="action-btn" id="revealAllBtn" onclick="toggleRevealAll()">👁 Hiện hết đáp án</button>
+        <button class="action-btn" onclick="shuffleCurrentQuestions()" title="Đảo thứ tự câu hỏi để tránh học vẹt vị trí">⇄ Đảo câu</button>
+        <button class="action-btn" onclick="resetCurrentSet()" title="Làm lại bộ đề đang mở">↺ Làm lại</button>
+        <button class="action-btn brand" onclick="openGoogleFormsModal()">+ Xuất Google Form</button>
+      </div>
+    </header>
+
+    <!-- Sub-bar: Search + Quick Filters + Live Accuracy -->
+    <div class="subbar">
+      <div class="search-box">
+        <span class="search-icon">⌕</span>
+        <input type="text" class="search-input" id="searchInput" placeholder="Tìm từ khóa câu hỏi, thuật ngữ (VD: boundary, review, FL-4.2)..." oninput="onSearchInput(this.value)" />
+      </div>
+
+      <div class="filter-chips">
+        <button class="chip active" id="filterAll" onclick="setQuickFilter('all')">Tất cả</button>
+        <button class="chip" id="filterUnanswered" onclick="setQuickFilter('unanswered')">Chưa làm</button>
+        <button class="chip" id="filterWrong" onclick="setQuickFilter('wrong')">Câu làm sai</button>
+        <button class="chip" id="filterStarred" onclick="setQuickFilter('starred')">★ Đánh dấu</button>
+        <button class="chip" id="filterFigures" onclick="setQuickFilter('figures')">Có hình/bảng</button>
+      </div>
+
+      <div class="stats-inline mono">
+        <span><span class="stat-dot" style="background:var(--state-correct)"></span>Đúng: <strong id="statCorrect">0</strong></span>
+        <span><span class="stat-dot" style="background:var(--state-wrong)"></span>Sai: <strong id="statWrong">0</strong></span>
+        <span>Tỷ lệ: <strong id="statPercent">0%</strong></span>
+      </div>
+    </div>
+
+    <!-- Workspace Body -->
+    <div class="workspace-body">
+      <div class="questions-scroll" id="questionsScroll">
+        <div class="questions-container" id="questionsContainer"></div>
+      </div>
+
+      <!-- Right Question Navigator -->
+      <aside class="right-panel">
+        <div class="panel-title">
+          <span>Bản đồ câu hỏi</span>
+          <span class="mono" id="gridProgressText">0/39</span>
+        </div>
+        <div class="q-grid" id="questionGrid"></div>
+
+        <div style="margin-top:auto; padding-top:14px; border-top:1px solid var(--border-hairline);">
+          <div class="panel-title" style="margin-bottom:8px;">Phím tắt học nhanh</div>
+          <div style="font-size:11.5px; color:var(--text-secondary); display:flex; flex-direction:column; gap:6px;">
+            <div><kbd>1</kbd>–<kbd>5</kbd> hoặc <kbd>A</kbd>–<kbd>E</kbd> Chọn đáp án</div>
+            <div><kbd>←</kbd> <kbd>→</kbd> Chuyển câu (Flashcard)</div>
+            <div><kbd>Space</kbd> Mở / Ẩn giải thích</div>
+            <div><kbd>F</kbd> Đánh dấu ★ câu khó</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- MODAL: GOOGLE FORMS GENERATOR (APPS SCRIPT) -->
+  <div class="modal-backdrop" id="gformsModal" onclick="if(event.target===this)closeGoogleFormsModal()">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:16px; font-weight:700;">Trình Tạo Google Forms Tự Động (Google Apps Script)</h2>
+          <p style="font-size:12px; color:var(--text-secondary); margin-top:2px;">Tự động tạo Google Form có sẵn điểm số, đáp án đúng và lời giải thích chi tiết</p>
+        </div>
+        <button class="icon-btn" onclick="closeGoogleFormsModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <label style="font-size:12.5px; font-weight:600;">Chọn bộ câu hỏi muốn tạo Google Form:</label>
+          <select id="gformSourceSelect" class="search-input" style="max-width:360px; padding-left:10px;" onchange="generateGFormScript()"></select>
+          <button class="action-btn primary" onclick="copyGFormScript()" id="copyScriptBtn">📋 Copy Mã Apps Script</button>
+          <button class="action-btn" onclick="downloadGFormScript()">⬇ Tải file .gs</button>
+        </div>
+
+        <div class="steps-guide">
+          <strong>Hướng dẫn 3 bước tạo Google Form trong 10 giây:</strong>
+          <div>1. Bấm nút <strong>Copy Mã Apps Script</strong> ở trên, sau đó mở trang <a href="https://script.google.com/home/start" target="_blank" style="color:var(--accent-brand); font-weight:600;">script.google.com</a> → bấm <strong>Dự án mới (New Project)</strong>.</div>
+          <div>2. Xóa đoạn code mặc định, dán (<code>Ctrl + V</code>) toàn bộ mã bên dưới vào → bấm biểu tượng Đĩa mềm (<code>Ctrl + S</code>) rồi bấm nút <strong>Chạy (Run)</strong> hàm <code>createISTQBQuizForm</code>.</div>
+          <div>3. Xem phần <strong>Nhật ký thực thi (Execution Log)</strong> ở dưới đáy màn hình để lấy <strong>Link làm bài Google Form</strong> và <strong>Link chỉnh sửa Form</strong> (Form cũng tự động lưu trong Google Drive của Thắng!).</div>
+        </div>
+
+        <textarea class="code-area" id="gformCodeArea" readonly></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: IMAGE LIGHTBOX -->
+  <div class="modal-backdrop" id="imgLightbox" onclick="this.classList.remove('open')">
+    <img id="lightboxImg" src="" alt="Preview" style="max-width:92vw; max-height:90vh; background:#fff; padding:12px; border-radius:10px; box-shadow:var(--shadow-float);" />
+  </div>
+
+  <script src="questions_data.js"></script>
+  <script>
+    // =========================================================================
+    // STATE & PERSISTENCE
+    // =========================================================================
+    const ALL_QUESTIONS = window.ISTQB_QUESTIONS || [];
+    const STORAGE_KEY = "istqb_thang_progress_v1";
+
+    let savedState = {
+      theme: "light",
+      datasetScope: "core565", // 'core565' (565 questions) or 'full610' (610 questions)
+      dedup: false,
+      answers: {},  // { qId: ['a'] }
+      starred: {},  // { qId: true }
+      wrongHistory: {} // { qId: count }
+    };
+
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) savedState = Object.assign(savedState, JSON.parse(raw));
+    } catch (e) {}
+
+    function saveProgress() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(savedState));
+      } catch (e) {}
+    }
+
+    let uiState = {
+      sidebarTab: "exams",      // 'exams' | 'chapters' | 'smart'
+      activeSetId: "de_01",     // exam_id, 'ch_1'..'ch_6', 'smart_mock40', 'smart_wrong', 'smart_starred', 'smart_figures', 'part_1'..'part_15'
+      studyMode: "study",       // 'study' | 'single' | 'exam'
+      quickFilter: "all",       // 'all' | 'unanswered' | 'wrong' | 'starred' | 'figures'
+      searchQuery: "",
+      revealAll: false,
+      singleIndex: 0,
+      shuffledOrder: null,      // array of qIds when shuffled or in mock40
+      examSubmitted: false,
+      examAnswers: {},          // temporary answers in 'exam' mode before submit
+      examTimerSec: 3600,
+      examTimerHandle: null
+    };
+
+    const CHAPTER_META = {
+      1: { title: "Chương 1: Nền tảng Kiểm thử", sub: "Fundamentals of Testing" },
+      2: { title: "Chương 2: Kiểm thử trong SDLC", sub: "Testing Throughout the SDLC" },
+      3: { title: "Chương 3: Kiểm thử tĩnh & Review", sub: "Static Testing" },
+      4: { title: "Chương 4: Phân tích & Thiết kế Test", sub: "Black-box, White-box, Experience-based" },
+      5: { title: "Chương 5: Quản lý hoạt động Kiểm thử", sub: "Planning, Estimation, Risk, Defect" },
+      6: { title: "Chương 6: Công cụ Kiểm thử", sub: "Test Tools & Automation" }
+    };
+
+    // =========================================================================
+    // DATASET FILTERING & SETS
+    // =========================================================================
+    function getScopedPool() {
+      return ALL_QUESTIONS.filter(q => {
+        if (savedState.datasetScope === "core565" && q.is_bonus) return false;
+        if (savedState.dedup && q.is_duplicate) return false;
+        return true;
+      });
+    }
+
+    function getQuestionsForSet(setId) {
+      const pool = getScopedPool();
+      if (setId === "all_pool") return pool;
+      if (setId.startsWith("de_") || setId.startsWith("istqb_") || setId.startsWith("astqb_")) {
+        return pool.filter(q => q.exam_id === setId);
+      }
+      if (setId.startsWith("ch_")) {
+        const ch = parseInt(setId.split("_")[1], 10);
+        return pool.filter(q => q.chapter === ch);
+      }
+      if (setId.startsWith("k_")) {
+        const kl = setId.split("_")[1].toUpperCase();
+        return pool.filter(q => q.k_level === kl);
+      }
+      if (setId === "smart_wrong") {
+        return pool.filter(q => isQuestionAnsweredWrong(q) || savedState.wrongHistory[q.id]);
+      }
+      if (setId === "smart_starred") {
+        return pool.filter(q => savedState.starred[q.id]);
+      }
+      if (setId === "smart_figures") {
+        return pool.filter(q => q.images && q.images.length > 0);
+      }
+      if (setId === "smart_multi") {
+        return pool.filter(q => q.multi);
+      }
+      if (setId.startsWith("part_")) {
+        const partIdx = parseInt(setId.split("_")[1], 10) - 1;
+        const chunkSize = 40;
+        return pool.slice(partIdx * chunkSize, (partIdx + 1) * chunkSize);
+      }
+      if (setId === "smart_mock40") {
+        if (!uiState.mock40Ids) generateMock40();
+        const map = new Map(pool.map(q => [q.id, q]));
+        return uiState.mock40Ids.map(id => map.get(id)).filter(Boolean);
+      }
+      return pool;
+    }
+
+    function generateMock40() {
+      // Official ISTQB v4.0 distribution across Chapters 1..6 (total 40 questions):
+      // Ch1: 8, Ch2: 6, Ch3: 4, Ch4: 11, Ch5: 9, Ch6: 2
+      const quotas = { 1: 8, 2: 6, 3: 4, 4: 11, 5: 9, 6: 2 };
+      const pool = getScopedPool();
+      let picked = [];
+      for (let ch = 1; ch <= 6; ch++) {
+        const chPool = pool.filter(q => q.chapter === ch);
+        const shuffled = [...chPool].sort(() => Math.random() - 0.5);
+        picked.push(...shuffled.slice(0, quotas[ch]));
+      }
+      uiState.mock40Ids = picked.map(q => q.id);
+    }
+
+    function getActiveQuestions() {
+      let list = getQuestionsForSet(uiState.activeSetId);
+
+      if (uiState.shuffledOrder) {
+        const orderMap = new Map(uiState.shuffledOrder.map((id, i) => [id, i]));
+        list = [...list].sort((a, b) => (orderMap.get(a.id) ?? 9999) - (orderMap.get(b.id) ?? 9999));
+      }
+
+      // Quick filter
+      if (uiState.quickFilter === "unanswered") {
+        list = list.filter(q => !getEffectiveUserAnswer(q.id));
+      } else if (uiState.quickFilter === "wrong") {
+        list = list.filter(q => isQuestionAnsweredWrong(q));
+      } else if (uiState.quickFilter === "starred") {
+        list = list.filter(q => savedState.starred[q.id]);
+      } else if (uiState.quickFilter === "figures") {
+        list = list.filter(q => q.images && q.images.length > 0);
+      }
+
+      // Search query
+      if (uiState.searchQuery.trim()) {
+        const qStr = uiState.searchQuery.toLowerCase().trim();
+        list = list.filter(q =>
+          q.stem.toLowerCase().includes(qStr) ||
+          q.explanation.toLowerCase().includes(qStr) ||
+          (q.lo && q.lo.toLowerCase().includes(qStr)) ||
+          q.options.some(o => o.text.toLowerCase().includes(qStr))
+        );
+      }
+
+      return list;
+    }
+
+    function getEffectiveUserAnswer(qId) {
+      if (uiState.studyMode === "exam") {
+        return uiState.examAnswers[qId] || null;
+      }
+      return savedState.answers[qId] || null;
+    }
+
+    function isAnswerMatch(userArr, correctArr) {
+      if (!userArr || userArr.length !== correctArr.length) return false;
+      const s1 = [...userArr].sort().join(",");
+      const s2 = [...correctArr].sort().join(",");
+      return s1 === s2;
+    }
+
+    function isQuestionAnsweredWrong(q) {
+      const u = savedState.answers[q.id];
+      if (!u || u.length === 0) return false;
+      if (q.multi && u.length < q.correct.length) return false;
+      return !isAnswerMatch(u, q.correct);
+    }
+
+    // =========================================================================
+    // SIDEBAR RENDERING
+    // =========================================================================
+    function renderSidebar() {
+      const pool = getScopedPool();
+      document.getElementById("totalPoolCount").textContent = `${pool.length} câu`;
+      document.getElementById("scope565Btn").classList.toggle("active", savedState.datasetScope === "core565");
+      document.getElementById("scope610Btn").classList.toggle("active", savedState.datasetScope === "full610");
+      document.getElementById("dedupCheckbox").checked = !!savedState.dedup;
+
+      const container = document.getElementById("sidebarList");
+      let html = "";
+
+      if (uiState.sidebarTab === "exams") {
+        // Group 1: 10 Đề Giải Chi Tiết TV
+        html += `<div class="nav-section-label"><span>10 Đề Giải Chi Tiết Tiếng Việt</span><span>${pool.filter(q=>q.group==='10De_VN').length} câu</span></div>`;
+        for (let i = 1; i <= 10; i++) {
+          const eid = `de_${String(i).padStart(2, "0")}`;
+          const qs = pool.filter(q => q.exam_id === eid);
+          const doneCount = qs.filter(q => savedState.answers[q.id]).length;
+          const allDone = qs.length > 0 && doneCount === qs.length;
+          html += `
+            <button class="nav-item ${uiState.activeSetId === eid ? 'active' : ''}" onclick="selectSet('${eid}', 'Đề thi thử ${String(i).padStart(2, '0')} (Giải chi tiết TV)')">
+              <div class="nav-item-left">
+                <span class="nav-dot ${allDone ? 'done' : ''}"></span>
+                <span class="nav-item-title">Đề thi thử số ${String(i).padStart(2, "0")}</span>
+              </div>
+              <span class="nav-badge mono">${doneCount}/${qs.length}</span>
+            </button>`;
+        }
+
+        // Group 2: 4 Đề Chuẩn ISTQB v4.0
+        html += `<div class="nav-section-label"><span>Bộ Đề Gốc ISTQB v4.0</span><span>186 câu</span></div>`;
+        const istqbSets = [
+          { id: "istqb_a", title: "ISTQB Sample Exam A" },
+          { id: "istqb_a_add", title: "ISTQB Exam A (Additional)" },
+          { id: "istqb_b", title: "ISTQB Sample Exam B" },
+          { id: "istqb_c", title: "ISTQB Sample Exam C" },
+          { id: "istqb_d", title: "ISTQB Sample Exam D" }
+        ];
+        for (const s of istqbSets) {
+          const qs = pool.filter(q => q.exam_id === s.id);
+          const doneCount = qs.filter(q => savedState.answers[q.id]).length;
+          html += `
+            <button class="nav-item ${uiState.activeSetId === s.id ? 'active' : ''}" onclick="selectSet('${s.id}', '${s.title}')">
+              <div class="nav-item-left">
+                <span class="nav-dot ${doneCount === qs.length && qs.length ? 'done' : ''}"></span>
+                <span class="nav-item-title">${s.title}</span>
+              </div>
+              <span class="nav-badge mono">${doneCount}/${qs.length}</span>
+            </button>`;
+        }
+
+        // Group 3: 2 Đề Chuẩn ASTQB v4.0.1
+        html += `<div class="nav-section-label"><span>Bộ Đề Gốc ASTQB v4.0.1</span><span>80 câu</span></div>`;
+        for (const num of ["3", "4"]) {
+          const eid = `astqb_${num}`;
+          const title = `ASTQB Sample Exam #${num}`;
+          const qs = pool.filter(q => q.exam_id === eid);
+          const doneCount = qs.filter(q => savedState.answers[q.id]).length;
+          html += `
+            <button class="nav-item ${uiState.activeSetId === eid ? 'active' : ''}" onclick="selectSet('${eid}', '${title}')">
+              <div class="nav-item-left">
+                <span class="nav-dot ${doneCount === qs.length && qs.length ? 'done' : ''}"></span>
+                <span class="nav-item-title">${title}</span>
+              </div>
+              <span class="nav-badge mono">${doneCount}/${qs.length}</span>
+            </button>`;
+        }
+      } else if (uiState.sidebarTab === "chapters") {
+        html += `<div class="nav-section-label"><span>Theo 6 Chương ISTQB Syllabus</span></div>`;
+        for (let ch = 1; ch <= 6; ch++) {
+          const cid = `ch_${ch}`;
+          const qs = pool.filter(q => q.chapter === ch);
+          const doneCount = qs.filter(q => savedState.answers[q.id]).length;
+          html += `
+            <button class="nav-item ${uiState.activeSetId === cid ? 'active' : ''}" onclick="selectSet('${cid}', '${CHAPTER_META[ch].title}')">
+              <div class="nav-item-left">
+                <span class="nav-dot ${doneCount === qs.length && qs.length ? 'done' : ''}"></span>
+                <div style="min-width:0">
+                  <div class="nav-item-title">${CHAPTER_META[ch].title}</div>
+                  <div style="font-size:10.5px; color:var(--text-muted);">${CHAPTER_META[ch].sub}</div>
+                </div>
+              </div>
+              <span class="nav-badge mono">${doneCount}/${qs.length}</span>
+            </button>`;
+        }
+
+        html += `<div class="nav-section-label"><span>Chia Đều Theo Phần (40 câu/Form)</span></div>`;
+        const totalParts = Math.ceil(pool.length / 40);
+        for (let p = 1; p <= totalParts; p++) {
+          const pid = `part_${p}`;
+          const qs = getQuestionsForSet(pid);
+          const doneCount = qs.filter(q => savedState.answers[q.id]).length;
+          html += `
+            <button class="nav-item ${uiState.activeSetId === pid ? 'active' : ''}" onclick="selectSet('${pid}', 'Phần ${p} (Câu ${(p-1)*40+1} – ${(p-1)*40+qs.length})')">
+              <div class="nav-item-left">
+                <span class="nav-dot ${doneCount === qs.length && qs.length ? 'done' : ''}"></span>
+                <span class="nav-item-title">Form Phần ${String(p).padStart(2, "0")} (Câu ${(p-1)*40+1}–${(p-1)*40+qs.length})</span>
+              </div>
+              <span class="nav-badge mono">${doneCount}/${qs.length}</span>
+            </button>`;
+        }
+      } else {
+        // Smart Sets
+        const wrongQs = getQuestionsForSet("smart_wrong");
+        const starQs = getQuestionsForSet("smart_starred");
+        const figQs = getQuestionsForSet("smart_figures");
+        const multiQs = getQuestionsForSet("smart_multi");
+
+        html += `<div class="nav-section-label"><span>Chế Độ Đặc Biệt</span></div>`;
+        html += `
+          <button class="nav-item ${uiState.activeSetId === 'smart_mock40' ? 'active' : ''}" onclick="startRandomMock40()">
+            <div class="nav-item-left">
+              <span class="nav-dot"></span>
+              <div>
+                <div class="nav-item-title">🎲 Đề Thi Thử Ngẫu Nhiên (40 câu)</div>
+                <div style="font-size:10.5px; color:var(--text-muted);">Chuẩn tỷ lệ 6 chương ISTQB • 60 phút</div>
+              </div>
+            </div>
+            <span class="nav-badge mono">40</span>
+          </button>
+          <button class="nav-item ${uiState.activeSetId === 'smart_wrong' ? 'active' : ''}" onclick="selectSet('smart_wrong', 'Kho Câu Hay Làm Sai')">
+            <div class="nav-item-left">
+              <span class="nav-dot"></span>
+              <span class="nav-item-title">❌ Kho Câu Hay Làm Sai</span>
+            </div>
+            <span class="nav-badge mono">${wrongQs.length}</span>
+          </button>
+          <button class="nav-item ${uiState.activeSetId === 'smart_starred' ? 'active' : ''}" onclick="selectSet('smart_starred', 'Câu Đã Đánh Dấu ★')">
+            <div class="nav-item-left">
+              <span class="nav-dot"></span>
+              <span class="nav-item-title">★ Câu Đã Đánh Dấu Sao</span>
+            </div>
+            <span class="nav-badge mono">${starQs.length}</span>
+          </button>
+          <button class="nav-item ${uiState.activeSetId === 'smart_figures' ? 'active' : ''}" onclick="selectSet('smart_figures', 'Chuyên Đề Câu Có Hình & Bảng Biểu')">
+            <div class="nav-item-left">
+              <span class="nav-dot"></span>
+              <span class="nav-item-title">📊 Câu Có Sơ Đồ & Bảng Biểu</span>
+            </div>
+            <span class="nav-badge mono">${figQs.length}</span>
+          </button>
+          <button class="nav-item ${uiState.activeSetId === 'smart_multi' ? 'active' : ''}" onclick="selectSet('smart_multi', 'Câu Chọn 2 Đáp Án (Select TWO)')">
+            <div class="nav-item-left">
+              <span class="nav-dot"></span>
+              <span class="nav-item-title">⚡ Câu Chọn 2 Đáp Án (Select TWO)</span>
+            </div>
+            <span class="nav-badge mono">${multiQs.length}</span>
+          </button>
+          <button class="nav-item ${uiState.activeSetId === 'all_pool' ? 'active' : ''}" onclick="selectSet('all_pool', 'Toàn Bộ Ngân Hàng Câu Hỏi')">
+            <div class="nav-item-left">
+              <span class="nav-dot"></span>
+              <span class="nav-item-title">📚 Toàn Bộ Ngân Hàng Câu Hỏi</span>
+            </div>
+            <span class="nav-badge mono">${pool.length}</span>
+          </button>`;
+      }
+
+      container.innerHTML = html;
+    }
+
+    // =========================================================================
+    // QUESTION CARDS & INTERACTION
+    // =========================================================================
+    function renderWorkspace() {
+      const questions = getActiveQuestions();
+      const allSetQuestions = getQuestionsForSet(uiState.activeSetId);
+
+      document.getElementById("currentSetMeta").textContent = `${questions.length} câu`;
+
+      // Calculate accuracy stats for active set
+      let correctCount = 0;
+      let wrongCount = 0;
+      let answeredCount = 0;
+
+      for (const q of allSetQuestions) {
+        const u = uiState.studyMode === "exam" ? uiState.examAnswers[q.id] : savedState.answers[q.id];
+        const reqLen = q.correct.length;
+        if (u && u.length >= reqLen) {
+          if (uiState.studyMode !== "exam" || uiState.examSubmitted) {
+            answeredCount++;
+            if (isAnswerMatch(u, q.correct)) correctCount++;
+            else wrongCount++;
+          } else {
+            answeredCount++;
+          }
+        }
+      }
+
+      document.getElementById("statCorrect").textContent = correctCount;
+      document.getElementById("statWrong").textContent = wrongCount;
+      const pct = (correctCount + wrongCount) > 0 ? Math.round((correctCount / (correctCount + wrongCount)) * 100) : 0;
+      document.getElementById("statPercent").textContent = `${pct}%`;
+      document.getElementById("gridProgressText").textContent = `${answeredCount}/${questions.length}`;
+
+      // Render Right Question Navigator Grid
+      const gridEl = document.getElementById("questionGrid");
+      gridEl.innerHTML = questions.map((q, idx) => {
+        const u = getEffectiveUserAnswer(q.id);
+        const reqLen = q.correct.length;
+        let stateCls = "";
+        if (u && u.length >= reqLen) {
+          if (uiState.studyMode === "exam" && !uiState.examSubmitted) {
+            stateCls = "pending";
+          } else {
+            stateCls = isAnswerMatch(u, q.correct) ? "correct" : "wrong";
+          }
+        }
+        const starCls = savedState.starred[q.id] ? "starred" : "";
+        const currCls = (uiState.studyMode === "single" && uiState.singleIndex === idx) ? "current" : "";
+        return `<button class="q-grid-btn ${stateCls} ${starCls} ${currCls}" onclick="jumpToQuestion(${idx}, '${q.id}')">${idx + 1}</button>`;
+      }).join("");
+
+      // Render Main Questions Container
+      const container = document.getElementById("questionsContainer");
+      if (questions.length === 0) {
+        container.innerHTML = `
+          <div class="q-card" style="text-align:center; padding:48px 24px;">
+            <div style="font-size:16px; font-weight:600; margin-bottom:6px;">Không có câu hỏi nào khớp với bộ lọc hiện tại</div>
+            <div style="font-size:13px; color:var(--text-secondary); margin-bottom:16px;">Thử chuyển bộ lọc sang "Tất cả" hoặc xóa từ khóa tìm kiếm.</div>
+            <button class="action-btn primary" onclick="setQuickFilter('all')">Hiện tất cả câu hỏi</button>
+          </div>`;
+        return;
+      }
+
+      let html = "";
+
+      // Exam Mode Header Banner & Score Report
+      if (uiState.studyMode === "exam") {
+        const mins = String(Math.floor(uiState.examTimerSec / 60)).padStart(2, "0");
+        const secs = String(uiState.examTimerSec % 60).padStart(2, "0");
+        html += `
+          <div class="exam-banner">
+            <div>
+              <div style="font-weight:700; font-size:14px;">Chế độ Làm Form Kiểm Tra (Ẩn đáp án khi làm bài)</div>
+              <div style="font-size:12px; color:var(--text-secondary);">Đã hoàn thành: <strong class="mono">${answeredCount}/${allSetQuestions.length}</strong> câu • Điểm đạt chuẩn ISTQB: <strong>65%</strong></div>
+            </div>
+            <div style="display:flex; align-items:center; gap:14px;">
+              <div class="exam-timer mono">⏱ ${mins}:${secs}</div>
+              ${!uiState.examSubmitted
+                ? `<button class="action-btn brand" onclick="submitExamForm()">✓ Nộp bài & Chấm điểm</button>`
+                : `<button class="action-btn" onclick="startExamTimerMode()">↺ Thi lại đề này</button>`
+              }
+            </div>
+          </div>`;
+
+        if (uiState.examSubmitted) {
+          const scorePct = allSetQuestions.length ? Math.round((correctCount / allSetQuestions.length) * 100) : 0;
+          const passed = scorePct >= 65;
+          html += `
+            <div class="score-card visible">
+              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+                <div>
+                  <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; padding:3px 9px; border-radius:99px; background:${passed ? 'var(--state-correct-bg)' : 'var(--state-wrong-bg)'}; color:${passed ? 'var(--state-correct)' : 'var(--state-wrong)'};">
+                    ${passed ? '✓ ĐẠT CHUẨN ISTQB (PASSED)' : '✕ CHƯA ĐẠT (CẦN >= 65%)'}
+                  </span>
+                  <h2 style="font-size:20px; font-weight:700; margin-top:8px;">Kết quả bài làm: ${correctCount} / ${allSetQuestions.length} câu đúng (${scorePct}%)</h2>
+                </div>
+                <button class="action-btn" onclick="setQuickFilter('wrong')">Chỉ xem các câu làm sai (${wrongCount})</button>
+              </div>
+              <div class="score-grid mono">
+                <div class="score-metric">
+                  <div class="score-metric-label">Điểm số</div>
+                  <div class="score-metric-val" style="color:${passed ? 'var(--state-correct)' : 'var(--state-wrong)'}">${correctCount}/${allSetQuestions.length}</div>
+                </div>
+                <div class="score-metric">
+                  <div class="score-metric-label">Tỷ lệ chính xác</div>
+                  <div class="score-metric-val">${scorePct}%</div>
+                </div>
+                <div class="score-metric">
+                  <div class="score-metric-label">Số câu sai / bỏ trống</div>
+                  <div class="score-metric-val">${allSetQuestions.length - correctCount}</div>
+                </div>
+              </div>
+            </div>`;
+        }
+      }
+
+      // Single-Question Flashcard Mode vs Scroll List Mode
+      if (uiState.studyMode === "single") {
+        if (uiState.singleIndex >= questions.length) uiState.singleIndex = 0;
+        const q = questions[uiState.singleIndex];
+        html += renderSingleNavHeader(uiState.singleIndex, questions.length);
+        html += renderQuestionCard(q, uiState.singleIndex);
+      } else {
+        html += questions.map((q, idx) => renderQuestionCard(q, idx)).join("");
+      }
+
+      container.innerHTML = html;
+    }
+
+    function renderSingleNavHeader(idx, total) {
+      return `
+        <div class="single-nav-bar">
+          <button class="action-btn" onclick="stepSingleQuestion(-1)" ${idx === 0 ? 'disabled style="opacity:0.4"' : ''}>← Câu trước</button>
+          <div class="kbd-hint">
+            <span class="mono" style="font-weight:700; color:var(--text-primary); font-size:13px;">Câu ${idx + 1} / ${total}</span>
+            <span>•</span>
+            <span>Bấm <kbd>1</kbd>–<kbd>4</kbd> chọn, <kbd>Space</kbd> xem giải thích, <kbd>→</kbd> qua câu</span>
+          </div>
+          <button class="action-btn primary" onclick="stepSingleQuestion(1)" ${idx + 1 >= total ? 'disabled style="opacity:0.4"' : ''}>Câu tiếp theo →</button>
+        </div>`;
+    }
+
+    function renderQuestionCard(q, idx) {
+      const userAns = getEffectiveUserAnswer(q.id) || [];
+      const reqCount = q.correct.length;
+      const isComplete = userAns.length >= reqCount;
+
+      // Determine whether answer & explanation should be shown
+      let showGraded = false;
+      if (uiState.studyMode === "exam") {
+        showGraded = uiState.examSubmitted;
+      } else {
+        showGraded = uiState.revealAll || isComplete;
+      }
+
+      const isCorrect = isComplete && isAnswerMatch(userAns, q.correct);
+      let cardStateCls = "";
+      if (showGraded && isComplete) {
+        cardStateCls = isCorrect ? "answered-correct" : "answered-wrong";
+      }
+
+      const isStarred = !!savedState.starred[q.id];
+
+      // Render figures if any (avoid duplicating option-level images for Sample 4 Q27)
+      const hasOptionImages = q.options.some(o => o.image);
+      let figuresHtml = "";
+      if (q.images && q.images.length > 0 && !hasOptionImages) {
+        figuresHtml = `<div class="q-figures">` + q.images.map(src => `
+          <div class="q-figure-wrap">
+            <img src="${src}" alt="Hình minh họa ${q.id}" loading="lazy" onclick="openLightbox('${src}')" title="Bấm để phóng to hình/bảng" />
+          </div>`).join("") + `</div>`;
+      }
+
+      // Render options
+      const optionsHtml = q.options.map((opt, oi) => {
+        const isPicked = userAns.includes(opt.key);
+        const isRightOpt = q.correct.includes(opt.key);
+        let optCls = "";
+        let tagHtml = "";
+
+        if (showGraded) {
+          if (isRightOpt) {
+            optCls = "is-correct";
+            tagHtml = `<span class="opt-status-tag correct">✓ Đáp án đúng</span>`;
+          } else if (isPicked && !isRightOpt) {
+            optCls = "is-wrong";
+            tagHtml = `<span class="opt-status-tag wrong">✕ Chọn sai</span>`;
+          }
+        } else if (isPicked) {
+          optCls = "selected-pending";
+        }
+
+        const optImgHtml = opt.image
+          ? `<img src="${opt.image}" alt="Option ${opt.key}" onclick="event.stopPropagation(); openLightbox('${opt.image}')" />`
+          : "";
+
+        return `
+          <button class="opt-item ${optCls}" onclick="onSelectOption('${q.id}', '${opt.key}')">
+            <span class="opt-key mono">${opt.key}</span>
+            <div class="opt-content">${escapeHtml(opt.text)}${optImgHtml}</div>
+            ${tagHtml}
+          </button>`;
+      }).join("");
+
+      const chapterBadge = q.chapter ? `<span class="q-meta-tag">Chương ${q.chapter}</span>` : "";
+      const loBadge = q.lo ? `<span class="q-meta-tag mono">${q.lo}${q.k_level ? ' • ' + q.k_level : ''}</span>` : "";
+      const bonusBadge = q.is_bonus ? `<span class="q-meta-tag bonus">Câu bổ sung v4.0</span>` : "";
+      const multiBadge = q.multi ? `<span class="q-meta-tag multi-tag">Chọn ${q.correct.length} đáp án</span>` : "";
+
+      return `
+        <article class="q-card ${cardStateCls}" id="qcard_${q.id}">
+          <div class="q-header">
+            <div class="q-badges">
+              <span class="q-index-badge mono">#${idx + 1}</span>
+              <span class="q-meta-tag">${escapeHtml(q.exam_title)} • ${escapeHtml(q.q_num)}</span>
+              ${chapterBadge}
+              ${loBadge}
+              ${bonusBadge}
+              ${multiBadge}
+            </div>
+            <div class="q-actions">
+              <button class="icon-btn" onclick="toggleQuestionExplain('${q.id}')" title="Hiện / Ẩn lời giải thích">💡</button>
+              <button class="icon-btn ${isStarred ? 'starred' : ''}" onclick="toggleStar('${q.id}')" title="Đánh dấu câu cần ôn kỹ (Phím F)">★</button>
+            </div>
+          </div>
+
+          <div class="q-stem">${escapeHtml(q.stem)}</div>
+          ${figuresHtml}
+
+          <div class="q-options">${optionsHtml}</div>
+
+          <div class="q-explain ${showGraded ? 'visible' : ''}" id="explain_${q.id}">
+            <div class="explain-header">
+              <span>Giải thích chi tiết — Đáp án đúng: ${q.correct.map(x => x.toUpperCase()).join(", ")}</span>
+              <span class="mono">${q.lo || ""}</span>
+            </div>
+            <div class="explain-body">${escapeHtml(q.explanation)}</div>
+            ${q.knowledge_ref ? `<div class="explain-ref">📌 <strong>Tham chiếu Syllabus:</strong> <span>${escapeHtml(q.knowledge_ref)}</span></div>` : ""}
+          </div>
+        </article>`;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    // =========================================================================
+    // USER ACTIONS
+    // =========================================================================
+    function onSelectOption(qId, optKey) {
+      const q = ALL_QUESTIONS.find(x => x.id === qId);
+      if (!q) return;
+      if (uiState.studyMode === "exam" && uiState.examSubmitted) return;
+
+      const targetStore = uiState.studyMode === "exam" ? uiState.examAnswers : savedState.answers;
+      let curr = targetStore[qId] ? [...targetStore[qId]] : [];
+      const reqCount = q.correct.length;
+
+      if (reqCount === 1) {
+        curr = [optKey];
+      } else {
+        if (curr.includes(optKey)) {
+          curr = curr.filter(k => k !== optKey);
+        } else {
+          if (curr.length >= reqCount) curr.shift();
+          curr.push(optKey);
+        }
+      }
+
+      targetStore[qId] = curr;
+
+      // Track wrong history for spaced repetition
+      if (uiState.studyMode !== "exam" && curr.length === reqCount) {
+        if (!isAnswerMatch(curr, q.correct)) {
+          savedState.wrongHistory[qId] = (savedState.wrongHistory[qId] || 0) + 1;
+        }
+        saveProgress();
+      }
+
+      renderWorkspace();
+      renderSidebar();
+    }
+
+    function toggleStar(qId) {
+      if (savedState.starred[qId]) delete savedState.starred[qId];
+      else savedState.starred[qId] = true;
+      saveProgress();
+      renderWorkspace();
+      renderSidebar();
+    }
+
+    function toggleQuestionExplain(qId) {
+      const el = document.getElementById(`explain_${qId}`);
+      if (el) el.classList.toggle("visible");
+    }
+
+    function toggleRevealAll() {
+      uiState.revealAll = !uiState.revealAll;
+      const btn = document.getElementById("revealAllBtn");
+      btn.textContent = uiState.revealAll ? "🙈 Ẩn đáp án" : "👁 Hiện hết đáp án";
+      btn.classList.toggle("primary", uiState.revealAll);
+      renderWorkspace();
+    }
+
+    function setDatasetScope(scope) {
+      savedState.datasetScope = scope;
+      saveProgress();
+      renderSidebar();
+      renderWorkspace();
+    }
+
+    function toggleDedup(checked) {
+      savedState.dedup = checked;
+      saveProgress();
+      renderSidebar();
+      renderWorkspace();
+    }
+
+    function switchSidebarTab(tab) {
+      uiState.sidebarTab = tab;
+      document.getElementById("tabExams").classList.toggle("active", tab === "exams");
+      document.getElementById("tabChapters").classList.toggle("active", tab === "chapters");
+      document.getElementById("tabSmart").classList.toggle("active", tab === "smart");
+      renderSidebar();
+    }
+
+    function selectSet(setId, title) {
+      uiState.activeSetId = setId;
+      uiState.singleIndex = 0;
+      uiState.shuffledOrder = null;
+      uiState.quickFilter = "all";
+      updateFilterChipUI();
+      document.getElementById("currentSetTitle").textContent = title;
+      if (uiState.studyMode === "exam") {
+        startExamTimerMode();
+      }
+      renderSidebar();
+      renderWorkspace();
+      document.getElementById("questionsScroll").scrollTop = 0;
+    }
+
+    function startRandomMock40() {
+      generateMock40();
+      uiState.activeSetId = "smart_mock40";
+      document.getElementById("currentSetTitle").textContent = "🎲 Đề Thi Thử Ngẫu Nhiên Chuẩn ISTQB (40 câu)";
+      setStudyMode("exam");
+    }
+
+    function setStudyMode(mode) {
+      uiState.studyMode = mode;
+      document.getElementById("modeStudyBtn").classList.toggle("active", mode === "study");
+      document.getElementById("modeSingleBtn").classList.toggle("active", mode === "single");
+      document.getElementById("modeExamBtn").classList.toggle("active", mode === "exam");
+
+      if (mode === "exam") {
+        startExamTimerMode();
+      } else {
+        stopExamTimer();
+      }
+      renderWorkspace();
+    }
+
+    function startExamTimerMode() {
+      stopExamTimer();
+      uiState.examSubmitted = false;
+      uiState.examAnswers = {};
+      const qs = getQuestionsForSet(uiState.activeSetId);
+      // 1.5 mins per question (60 mins for 40 questions)
+      uiState.examTimerSec = Math.max(15, qs.length) * 90;
+      uiState.examTimerHandle = setInterval(() => {
+        if (uiState.examTimerSec > 0 && !uiState.examSubmitted) {
+          uiState.examTimerSec--;
+          const timerEl = document.querySelector(".exam-timer");
+          if (timerEl) {
+            const m = String(Math.floor(uiState.examTimerSec / 60)).padStart(2, "0");
+            const s = String(uiState.examTimerSec % 60).padStart(2, "0");
+            timerEl.textContent = `⏱ ${m}:${s}`;
+          }
+        } else if (uiState.examTimerSec === 0 && !uiState.examSubmitted) {
+          submitExamForm();
+        }
+      }, 1000);
+      renderWorkspace();
+    }
+
+    function stopExamTimer() {
+      if (uiState.examTimerHandle) {
+        clearInterval(uiState.examTimerHandle);
+        uiState.examTimerHandle = null;
+      }
+    }
+
+    function submitExamForm() {
+      uiState.examSubmitted = true;
+      stopExamTimer();
+      // Also record answers & wrong questions into savedState so user tracks progress
+      const qs = getQuestionsForSet(uiState.activeSetId);
+      for (const q of qs) {
+        const u = uiState.examAnswers[q.id];
+        if (u && u.length > 0) {
+          savedState.answers[q.id] = u;
+          if (!isAnswerMatch(u, q.correct)) {
+            savedState.wrongHistory[q.id] = (savedState.wrongHistory[q.id] || 0) + 1;
+          }
+        }
+      }
+      saveProgress();
+      renderWorkspace();
+      renderSidebar();
+      document.getElementById("questionsScroll").scrollTop = 0;
+    }
+
+    function setQuickFilter(filter) {
+      uiState.quickFilter = filter;
+      uiState.singleIndex = 0;
+      updateFilterChipUI();
+      renderWorkspace();
+    }
+
+    function updateFilterChipUI() {
+      const map = {
+        all: "filterAll",
+        unanswered: "filterUnanswered",
+        wrong: "filterWrong",
+        starred: "filterStarred",
+        figures: "filterFigures"
+      };
+      for (const [k, id] of Object.entries(map)) {
+        document.getElementById(id).classList.toggle("active", uiState.quickFilter === k);
+      }
+    }
+
+    function onSearchInput(val) {
+      uiState.searchQuery = val;
+      uiState.singleIndex = 0;
+      renderWorkspace();
+    }
+
+    function shuffleCurrentQuestions() {
+      const qs = getQuestionsForSet(uiState.activeSetId);
+      uiState.shuffledOrder = [...qs].map(q => q.id).sort(() => Math.random() - 0.5);
+      uiState.singleIndex = 0;
+      renderWorkspace();
+    }
+
+    function resetCurrentSet() {
+      const qs = getQuestionsForSet(uiState.activeSetId);
+      for (const q of qs) {
+        delete savedState.answers[q.id];
+      }
+      saveProgress();
+      if (uiState.studyMode === "exam") {
+        startExamTimerMode();
+      } else {
+        renderWorkspace();
+        renderSidebar();
+      }
+    }
+
+    function jumpToQuestion(idx, qId) {
+      if (uiState.studyMode === "single") {
+        uiState.singleIndex = idx;
+        renderWorkspace();
+      } else {
+        const el = document.getElementById(`qcard_${qId}`);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    function stepSingleQuestion(delta) {
+      const qs = getActiveQuestions();
+      const next = uiState.singleIndex + delta;
+      if (next >= 0 && next < qs.length) {
+        uiState.singleIndex = next;
+        renderWorkspace();
+        document.getElementById("questionsScroll").scrollTop = 0;
+      }
+    }
+
+    function openLightbox(src) {
+      document.getElementById("lightboxImg").src = src;
+      document.getElementById("imgLightbox").classList.add("open");
+    }
+
+    // =========================================================================
+    // KEYBOARD SHORTCUTS
+    // =========================================================================
+    document.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.tagName === "SELECT") return;
+      const qs = getActiveQuestions();
+      if (!qs.length) return;
+
+      const targetQ = uiState.studyMode === "single" ? qs[uiState.singleIndex] : qs[0];
+      if (!targetQ) return;
+
+      const key = e.key.toLowerCase();
+      const keyMap = { "1": "a", "2": "b", "3": "c", "4": "d", "5": "e", "a": "a", "b": "b", "c": "c", "d": "d", "e": "e" };
+
+      if (uiState.studyMode === "single") {
+        if (keyMap[key]) {
+          const optExists = targetQ.options.some(o => o.key === keyMap[key]);
+          if (optExists) {
+            e.preventDefault();
+            onSelectOption(targetQ.id, keyMap[key]);
+          }
+        } else if (e.key === "ArrowRight" || key === "j") {
+          e.preventDefault();
+          stepSingleQuestion(1);
+        } else if (e.key === "ArrowLeft" || key === "k") {
+          e.preventDefault();
+          stepSingleQuestion(-1);
+        } else if (e.key === " ") {
+          e.preventDefault();
+          toggleQuestionExplain(targetQ.id);
+        } else if (key === "f") {
+          e.preventDefault();
+          toggleStar(targetQ.id);
+        }
+      }
+    });
+
+    // =========================================================================
+    // GOOGLE FORMS GENERATOR (APPS SCRIPT BUILDER)
+    // =========================================================================
+    function openGoogleFormsModal() {
+      const sel = document.getElementById("gformSourceSelect");
+      const pool = getScopedPool();
+      let opts = [
+        { val: "current", label: `Bộ đề đang mở: ${document.getElementById("currentSetTitle").textContent} (${getActiveQuestions().length} câu)` }
+      ];
+      for (let i = 1; i <= 10; i++) {
+        const eid = `de_${String(i).padStart(2, "0")}`;
+        opts.push({ val: eid, label: `Đề thi thử ${String(i).padStart(2, "0")} — Giải chi tiết TV (${pool.filter(q=>q.exam_id===eid).length} câu)` });
+      }
+      opts.push(
+        { val: "istqb_a", label: "ISTQB Sample Exam A (40 câu)" },
+        { val: "istqb_a_add", label: "ISTQB Sample Exam A — Additional (26 câu)" },
+        { val: "istqb_b", label: "ISTQB Sample Exam B (40 câu)" },
+        { val: "istqb_c", label: "ISTQB Sample Exam C (40 câu)" },
+        { val: "istqb_d", label: "ISTQB Sample Exam D (40 câu)" },
+        { val: "astqb_3", label: "ASTQB Sample Exam #3 (40 câu)" },
+        { val: "astqb_4", label: "ASTQB Sample Exam #4 (40 câu)" }
+      );
+      for (let ch = 1; ch <= 6; ch++) {
+        opts.push({ val: `ch_${ch}`, label: `${CHAPTER_META[ch].title} (${pool.filter(q=>q.chapter===ch).length} câu)` });
+      }
+      sel.innerHTML = opts.map(o => `<option value="${o.val}">${o.label}</option>`).join("");
+      generateGFormScript();
+      document.getElementById("gformsModal").classList.add("open");
+    }
+
+    function closeGoogleFormsModal() {
+      document.getElementById("gformsModal").classList.remove("open");
+    }
+
+    function generateGFormScript() {
+      const val = document.getElementById("gformSourceSelect").value;
+      const qs = val === "current" ? getActiveQuestions() : getQuestionsForSet(val);
+      const titleText = val === "current"
+        ? document.getElementById("currentSetTitle").textContent
+        : document.getElementById("gformSourceSelect").selectedOptions[0].text.replace(/\s*\(\d+\s*câu\)$/, "");
+
+      const payload = qs.map((q, i) => ({
+        n: i + 1,
+        ref: `${q.exam_title} - ${q.q_num}${q.lo ? ' [' + q.lo + ']' : ''}`,
+        stem: q.stem + (q.images && q.images.length ? "\n[Lưu ý: Câu này có bảng/hình minh họa trên Web App]" : ""),
+        opts: q.options.map(o => ({ k: o.key, t: `${o.key.toUpperCase()}) ${o.text}` })),
+        ans: q.correct,
+        multi: q.multi,
+        exp: (q.explanation + (q.knowledge_ref ? `\n📌 Kiến thức: ${q.knowledge_ref}` : "")).slice(0, 1800)
+      }));
+
+      const scriptCode = `/**
+ * GOOGLE APPS SCRIPT TỰ ĐỘNG TẠO GOOGLE FORM TRẮC NGHIỆM ISTQB CTFL v4.0
+ * Bộ đề: ${titleText} (${qs.length} câu hỏi)
+ * Cách chạy: Dán toàn bộ mã này vào https://script.google.com -> Bấm Lưu (Ctrl+S) -> Bấm Run hàm createISTQBQuizForm
+ */
+function createISTQBQuizForm() {
+  var formTitle = ${JSON.stringify("ISTQB CTFL v4.0 — " + titleText)};
+  var form = FormApp.create(formTitle);
+  form.setIsQuiz(true);
+  form.setDescription("Bài luyện tập & kiểm tra ISTQB Foundation Level v4.0 (" + ${qs.length} + " câu). Tự động chấm điểm và hiển thị giải thích chi tiết sau khi nộp bài.");
+  form.setCollectEmail(false);
+  form.setAllowResponseEdits(true);
+  form.setPublishingSummary(true);
+
+  var questions = ${JSON.stringify(payload, null, 2)};
+
+  for (var i = 0; i < questions.length; i++) {
+    var q = questions[i];
+    var itemTitle = "Câu " + q.n + " (" + q.ref + "):\\n" + q.stem;
+    var item = q.multi ? form.addCheckboxItem() : form.addMultipleChoiceItem();
+    item.setTitle(itemTitle);
+    item.setPoints(1);
+    item.setRequired(false);
+
+    var choices = [];
+    for (var j = 0; j < q.opts.length; j++) {
+      var opt = q.opts[j];
+      var isCorrect = q.ans.indexOf(opt.k) !== -1;
+      choices.push(item.createChoice(opt.t, isCorrect));
+    }
+    item.setChoices(choices);
+
+    if (q.exp) {
+      var feedback = FormApp.createFeedback()
+        .setText("ĐÁP ÁN ĐÚNG: " + q.ans.join(", ").toUpperCase() + "\\n\\n" + q.exp)
+        .build();
+      item.setFeedbackForCorrect(feedback);
+      item.setFeedbackForIncorrect(feedback);
+    }
+  }
+
+  Logger.log("==========================================");
+  Logger.log("✅ ĐÃ TẠO GOOGLE FORM THÀNH CÔNG!");
+  Logger.log("👉 Link làm bài (Published URL): " + form.getPublishedUrl());
+  Logger.log("👉 Link chỉnh sửa (Edit URL): " + form.getEditUrl());
+  Logger.log("==========================================");
+}`;
+
+      document.getElementById("gformCodeArea").value = scriptCode;
+    }
+
+    function copyGFormScript() {
+      const area = document.getElementById("gformCodeArea");
+      area.select();
+      navigator.clipboard.writeText(area.value);
+      const btn = document.getElementById("copyScriptBtn");
+      btn.textContent = "✓ Đã Copy mã vào Clipboard!";
+      setTimeout(() => { btn.textContent = "📋 Copy Mã Apps Script"; }, 2500);
+    }
+
+    function downloadGFormScript() {
+      const val = document.getElementById("gformSourceSelect").value;
+      const code = document.getElementById("gformCodeArea").value;
+      const blob = new Blob([code], { type: "text/plain;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `ISTQB_GoogleForm_${val}.gs`;
+      a.click();
+    }
+
+    // =========================================================================
+    // THEME & INITIALIZATION
+    // =========================================================================
+    function applyTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      savedState.theme = theme;
+      saveProgress();
+    }
+
+    document.getElementById("themeToggleBtn").addEventListener("click", () => {
+      applyTheme(savedState.theme === "dark" ? "light" : "dark");
+    });
+
+    // Boot
+    applyTheme(savedState.theme || "light");
+    renderSidebar();
+    renderWorkspace();
+  </script>
+</body>
+</html>
