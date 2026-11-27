@@ -756,8 +756,51 @@
       font-weight: 500;
       color: var(--text-primary);
       line-height: 1.65;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       white-space: pre-line;
+    }
+
+    .q-stem-vi {
+      margin-top: -4px;
+      margin-bottom: 16px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-subtle);
+      border-left: 3px solid var(--accent-brand);
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      white-space: pre-line;
+      display: none;
+    }
+
+    .q-stem-vi.visible {
+      display: block;
+      animation: fadeIn 0.16s ease;
+    }
+
+    .q-stem-vi-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--accent-brand);
+      margin-bottom: 3px;
+      display: block;
+    }
+
+    .opt-vi {
+      margin-top: 5px;
+      padding-top: 5px;
+      border-top: 1px dashed var(--border-hairline);
+      font-size: 13.2px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      display: none;
+    }
+
+    .opt-vi.visible {
+      display: block;
     }
 
     /* Cropped PDF Figures / Tables */
@@ -1205,6 +1248,7 @@
       </div>
 
       <div class="topbar-right">
+        <button class="action-btn" id="bilingualBtn" onclick="toggleAlwaysBilingual()" title="Mặc định: Dịch nghĩa hiện ra ngay khi chọn đáp án. Bấm nút này nếu muốn hiện sẵn tiếng Việt từ đầu">🌐 Dịch khi có đáp án</button>
         <button class="action-btn" id="revealAllBtn" onclick="toggleRevealAll()">👁 Hiện hết đáp án</button>
         <button class="action-btn" onclick="shuffleCurrentQuestions()" title="Đảo thứ tự câu hỏi để tránh học vẹt vị trí">⇄ Đảo câu</button>
         <button class="action-btn" onclick="resetCurrentSet()" title="Làm lại bộ đề đang mở">↺ Làm lại</button>
@@ -1331,6 +1375,7 @@
       quickFilter: "all",       // 'all' | 'unanswered' | 'wrong' | 'starred' | 'figures'
       searchQuery: "",
       revealAll: false,
+      alwaysBilingual: false,
       singleIndex: 0,
       shuffledOrder: null,      // array of qIds when shuffled or in mock40
       examSubmitted: false,
@@ -1431,14 +1476,16 @@
         list = list.filter(q => q.images && q.images.length > 0);
       }
 
-      // Search query
+      // Search query (matches both English and Vietnamese translations)
       if (uiState.searchQuery.trim()) {
         const qStr = uiState.searchQuery.toLowerCase().trim();
         list = list.filter(q =>
           q.stem.toLowerCase().includes(qStr) ||
+          (q.stem_vi && q.stem_vi.toLowerCase().includes(qStr)) ||
           q.explanation.toLowerCase().includes(qStr) ||
+          (q.explanation_vi && q.explanation_vi.toLowerCase().includes(qStr)) ||
           (q.lo && q.lo.toLowerCase().includes(qStr)) ||
-          q.options.some(o => o.text.toLowerCase().includes(qStr))
+          q.options.some(o => o.text.toLowerCase().includes(qStr) || (o.text_vi && o.text_vi.toLowerCase().includes(qStr)))
         );
       }
 
@@ -1803,6 +1850,7 @@
       }
 
       // Render options
+      const showVi = showGraded || uiState.alwaysBilingual;
       const optionsHtml = q.options.map((opt, oi) => {
         const isPicked = userAns.includes(opt.key);
         const isRightOpt = q.correct.includes(opt.key);
@@ -1825,10 +1873,18 @@
           ? `<img src="${opt.image}" alt="Option ${opt.key}" onclick="event.stopPropagation(); openLightbox('${opt.image}')" />`
           : "";
 
+        const optViHtml = (opt.text_vi && opt.text_vi !== opt.text)
+          ? `<div class="opt-vi ${showVi ? 'visible' : ''}" data-vi-for="${q.id}">🇻🇳 ${escapeHtml(opt.text_vi)}</div>`
+          : "";
+
         return `
           <button class="opt-item ${optCls}" onclick="onSelectOption('${q.id}', '${opt.key}')">
             <span class="opt-key mono">${opt.key}</span>
-            <div class="opt-content">${escapeHtml(opt.text)}${optImgHtml}</div>
+            <div class="opt-content">
+              <div>${escapeHtml(opt.text)}</div>
+              ${optViHtml}
+              ${optImgHtml}
+            </div>
             ${tagHtml}
           </button>`;
       }).join("");
@@ -1837,6 +1893,25 @@
       const loBadge = q.lo ? `<span class="q-meta-tag mono">${q.lo}${q.k_level ? ' • ' + q.k_level : ''}</span>` : "";
       const bonusBadge = q.is_bonus ? `<span class="q-meta-tag bonus">Câu bổ sung v4.0</span>` : "";
       const multiBadge = q.multi ? `<span class="q-meta-tag multi-tag">Chọn ${q.correct.length} đáp án</span>` : "";
+
+      const stemViHtml = q.stem_vi
+        ? `<div class="q-stem-vi ${showVi ? 'visible' : ''}" id="stemvi_${q.id}">
+             <span class="q-stem-vi-label">🇻🇳 Dịch nghĩa đề bài</span>
+             ${escapeHtml(q.stem_vi)}
+           </div>`
+        : "";
+
+      const explainText = (q.explanation_vi && q.lang === "en")
+        ? `${q.explanation_vi}\n\n— Bản gốc Tiếng Anh (Original Rationale) —\n${q.explanation}`
+        : q.explanation;
+
+      const rightOptsViSummary = q.correct
+        .map(k => {
+          const found = q.options.find(o => o.key === k);
+          if (!found) return k.toUpperCase();
+          return `${k.toUpperCase()}) ${found.text_vi || found.text}`;
+        })
+        .join(" | ");
 
       return `
         <article class="q-card ${cardStateCls}" id="qcard_${q.id}">
@@ -1850,12 +1925,13 @@
               ${multiBadge}
             </div>
             <div class="q-actions">
-              <button class="icon-btn" onclick="toggleQuestionExplain('${q.id}')" title="Hiện / Ẩn lời giải thích">💡</button>
+              <button class="icon-btn" onclick="toggleQuestionExplain('${q.id}')" title="Hiện / Ẩn dịch nghĩa & lời giải thích">💡</button>
               <button class="icon-btn ${isStarred ? 'starred' : ''}" onclick="toggleStar('${q.id}')" title="Đánh dấu câu cần ôn kỹ (Phím F)">★</button>
             </div>
           </div>
 
           <div class="q-stem">${escapeHtml(q.stem)}</div>
+          ${stemViHtml}
           ${figuresHtml}
 
           <div class="q-options">${optionsHtml}</div>
@@ -1865,7 +1941,11 @@
               <span>Giải thích chi tiết — Đáp án đúng: ${q.correct.map(x => x.toUpperCase()).join(", ")}</span>
               <span class="mono">${q.lo || ""}</span>
             </div>
-            <div class="explain-body">${escapeHtml(q.explanation)}</div>
+            ${q.stem_vi ? `<div style="margin-bottom:10px; padding:8px 12px; background:var(--bg-subtle); border-radius:6px; font-size:13.2px; color:var(--text-secondary);">
+              <div><strong>🇻🇳 Dịch câu hỏi:</strong> ${escapeHtml(q.stem_vi)}</div>
+              <div style="margin-top:4px; color:var(--state-correct);"><strong>✓ Dịch đáp án đúng:</strong> ${escapeHtml(rightOptsViSummary)}</div>
+            </div>` : ""}
+            <div class="explain-body">${escapeHtml(explainText)}</div>
             ${q.knowledge_ref ? `<div class="explain-ref">📌 <strong>Tham chiếu Syllabus:</strong> <span>${escapeHtml(q.knowledge_ref)}</span></div>` : ""}
           </div>
         </article>`;
@@ -1927,6 +2007,19 @@
     function toggleQuestionExplain(qId) {
       const el = document.getElementById(`explain_${qId}`);
       if (el) el.classList.toggle("visible");
+      const stemVi = document.getElementById(`stemvi_${qId}`);
+      if (stemVi) stemVi.classList.toggle("visible");
+      document.querySelectorAll(`[data-vi-for="${qId}"]`).forEach(node => {
+        node.classList.toggle("visible");
+      });
+    }
+
+    function toggleAlwaysBilingual() {
+      uiState.alwaysBilingual = !uiState.alwaysBilingual;
+      const btn = document.getElementById("bilingualBtn");
+      btn.textContent = uiState.alwaysBilingual ? "🌐 Luôn hiện song ngữ" : "🌐 Dịch khi có đáp án";
+      btn.classList.toggle("primary", uiState.alwaysBilingual);
+      renderWorkspace();
     }
 
     function toggleRevealAll() {
@@ -2195,15 +2288,26 @@
         ? document.getElementById("currentSetTitle").textContent
         : document.getElementById("gformSourceSelect").selectedOptions[0].text.replace(/\s*\(\d+\s*câu\)$/, "");
 
-      const payload = qs.map((q, i) => ({
-        n: i + 1,
-        ref: `${q.exam_title} - ${q.q_num}${q.lo ? ' [' + q.lo + ']' : ''}`,
-        stem: q.stem + (q.images && q.images.length ? "\n[Lưu ý: Câu này có bảng/hình minh họa trên Web App]" : ""),
-        opts: q.options.map(o => ({ k: o.key, t: `${o.key.toUpperCase()}) ${o.text}` })),
-        ans: q.correct,
-        multi: q.multi,
-        exp: (q.explanation + (q.knowledge_ref ? `\n📌 Kiến thức: ${q.knowledge_ref}` : "")).slice(0, 1800)
-      }));
+      const payload = qs.map((q, i) => {
+        const optsViText = q.options.map(o => `  ${o.key.toUpperCase()}) ${o.text_vi || o.text}`).join("\n");
+        const expVi = q.explanation_vi || q.explanation;
+        const fullFeedback = [
+          q.stem_vi ? `🇻🇳 DỊCH CÂU HỎI:\n${q.stem_vi}` : "",
+          `🇻🇳 DỊCH CÁC ĐÁP ÁN:\n${optsViText}`,
+          `💡 GIẢI THÍCH CHI TIẾT:\n${expVi}`,
+          q.knowledge_ref ? `📌 Kiến thức: ${q.knowledge_ref}` : ""
+        ].filter(Boolean).join("\n\n").slice(0, 1850);
+
+        return {
+          n: i + 1,
+          ref: `${q.exam_title} - ${q.q_num}${q.lo ? ' [' + q.lo + ']' : ''}`,
+          stem: q.stem + (q.images && q.images.length ? "\n[Lưu ý: Câu này có bảng/hình minh họa trên Web App]" : ""),
+          opts: q.options.map(o => ({ k: o.key, t: `${o.key.toUpperCase()}) ${o.text}` })),
+          ans: q.correct,
+          multi: q.multi,
+          exp: fullFeedback
+        };
+      });
 
       const scriptCode = `/**
  * GOOGLE APPS SCRIPT TỰ ĐỘNG TẠO GOOGLE FORM TRẮC NGHIỆM ISTQB CTFL v4.0
