@@ -753,54 +753,69 @@
 
     .q-stem {
       font-size: 15.5px;
-      font-weight: 500;
+      font-weight: 600;
       color: var(--text-primary);
-      line-height: 1.65;
+      line-height: 1.6;
       margin-bottom: 14px;
       white-space: pre-line;
+      letter-spacing: -0.01em;
     }
 
     .q-stem-vi {
-      margin-top: -4px;
+      margin-top: -6px;
       margin-bottom: 16px;
-      padding: 10px 14px;
-      border-radius: var(--radius-sm);
-      background: var(--bg-subtle);
-      border-left: 3px solid var(--accent-brand);
+      padding: 2px 0 2px 12px;
+      border-left: 2px solid var(--border-strong);
       font-size: 14px;
+      font-weight: 400;
       color: var(--text-secondary);
-      line-height: 1.6;
-      white-space: pre-line;
+      line-height: 1.55;
       display: none;
     }
 
     .q-stem-vi.visible {
       display: block;
-      animation: fadeIn 0.16s ease;
+      animation: fadeIn 0.15s ease;
     }
 
-    .q-stem-vi-label {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--accent-brand);
-      margin-bottom: 3px;
-      display: block;
+    .opt-en {
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.45;
     }
 
     .opt-vi {
-      margin-top: 5px;
-      padding-top: 5px;
-      border-top: 1px dashed var(--border-hairline);
-      font-size: 13.2px;
+      margin-top: 3px;
+      font-size: 13px;
+      font-weight: 400;
       color: var(--text-secondary);
-      line-height: 1.5;
+      line-height: 1.45;
       display: none;
     }
 
     .opt-vi.visible {
       display: block;
+    }
+
+    .opt-item.is-correct .opt-en {
+      color: var(--state-correct);
+      font-weight: 600;
+    }
+
+    .opt-item.is-correct .opt-vi {
+      color: var(--state-correct);
+      opacity: 0.88;
+    }
+
+    .opt-item.is-wrong .opt-en {
+      color: var(--state-wrong);
+      font-weight: 600;
+    }
+
+    .opt-item.is-wrong .opt-vi {
+      color: var(--state-wrong);
+      opacity: 0.88;
     }
 
     /* Cropped PDF Figures / Tables */
@@ -1874,14 +1889,14 @@
           : "";
 
         const optViHtml = (opt.text_vi && opt.text_vi !== opt.text)
-          ? `<div class="opt-vi ${showVi ? 'visible' : ''}" data-vi-for="${q.id}">🇻🇳 ${escapeHtml(opt.text_vi)}</div>`
+          ? `<div class="opt-vi ${showVi ? 'visible' : ''}" data-vi-for="${q.id}">${escapeHtml(opt.text_vi)}</div>`
           : "";
 
         return `
           <button class="opt-item ${optCls}" onclick="onSelectOption('${q.id}', '${opt.key}')">
             <span class="opt-key mono">${opt.key}</span>
             <div class="opt-content">
-              <div>${escapeHtml(opt.text)}</div>
+              <div class="opt-en">${escapeHtml(opt.text)}</div>
               ${optViHtml}
               ${optImgHtml}
             </div>
@@ -1895,23 +1910,12 @@
       const multiBadge = q.multi ? `<span class="q-meta-tag multi-tag">Chọn ${q.correct.length} đáp án</span>` : "";
 
       const stemViHtml = q.stem_vi
-        ? `<div class="q-stem-vi ${showVi ? 'visible' : ''}" id="stemvi_${q.id}">
-             <span class="q-stem-vi-label">🇻🇳 Dịch nghĩa đề bài</span>
-             ${escapeHtml(q.stem_vi)}
-           </div>`
+        ? `<div class="q-stem-vi ${showVi ? 'visible' : ''}" id="stemvi_${q.id}">${escapeHtml(q.stem_vi)}</div>`
         : "";
 
       const explainText = (q.explanation_vi && q.lang === "en")
-        ? `${q.explanation_vi}\n\n— Bản gốc Tiếng Anh (Original Rationale) —\n${q.explanation}`
+        ? `${q.explanation_vi}\n\n— Original Rationale —\n${q.explanation}`
         : q.explanation;
-
-      const rightOptsViSummary = q.correct
-        .map(k => {
-          const found = q.options.find(o => o.key === k);
-          if (!found) return k.toUpperCase();
-          return `${k.toUpperCase()}) ${found.text_vi || found.text}`;
-        })
-        .join(" | ");
 
       return `
         <article class="q-card ${cardStateCls}" id="qcard_${q.id}">
@@ -1941,10 +1945,6 @@
               <span>Giải thích chi tiết — Đáp án đúng: ${q.correct.map(x => x.toUpperCase()).join(", ")}</span>
               <span class="mono">${q.lo || ""}</span>
             </div>
-            ${q.stem_vi ? `<div style="margin-bottom:10px; padding:8px 12px; background:var(--bg-subtle); border-radius:6px; font-size:13.2px; color:var(--text-secondary);">
-              <div><strong>🇻🇳 Dịch câu hỏi:</strong> ${escapeHtml(q.stem_vi)}</div>
-              <div style="margin-top:4px; color:var(--state-correct);"><strong>✓ Dịch đáp án đúng:</strong> ${escapeHtml(rightOptsViSummary)}</div>
-            </div>` : ""}
             <div class="explain-body">${escapeHtml(explainText)}</div>
             ${q.knowledge_ref ? `<div class="explain-ref">📌 <strong>Tham chiếu Syllabus:</strong> <span>${escapeHtml(q.knowledge_ref)}</span></div>` : ""}
           </div>
