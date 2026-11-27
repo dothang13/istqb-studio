@@ -2292,10 +2292,10 @@
         const optsViText = q.options.map(o => `  ${o.key.toUpperCase()}) ${o.text_vi || o.text}`).join("\n");
         const expVi = q.explanation_vi || q.explanation;
         const fullFeedback = [
-          q.stem_vi ? `🇻🇳 DỊCH CÂU HỎI:\n${q.stem_vi}` : "",
-          `🇻🇳 DỊCH CÁC ĐÁP ÁN:\n${optsViText}`,
-          `💡 GIẢI THÍCH CHI TIẾT:\n${expVi}`,
-          q.knowledge_ref ? `📌 Kiến thức: ${q.knowledge_ref}` : ""
+          q.stem_vi ? `[DỊCH CÂU HỎI]\n${q.stem_vi}` : "",
+          `[DỊCH CÁC ĐÁP ÁN]\n${optsViText}`,
+          `[GIẢI THÍCH CHI TIẾT]\n${expVi}`,
+          q.knowledge_ref ? `Tham chiếu: ${q.knowledge_ref}` : ""
         ].filter(Boolean).join("\n\n").slice(0, 1850);
 
         return {

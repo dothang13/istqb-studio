@@ -39,11 +39,11 @@ for fname, exam_id, title in SETS:
         exp_vi = q.get("explanation_vi") or q["explanation"]
         feedback_parts = []
         if q.get("stem_vi"):
-            feedback_parts.append(f"🇻🇳 DỊCH CÂU HỎI:\n{q['stem_vi']}")
-        feedback_parts.append(f"🇻🇳 DỊCH CÁC ĐÁP ÁN:\n{opts_vi_text}")
-        feedback_parts.append(f"💡 GIẢI THÍCH CHI TIẾT:\n{exp_vi}")
+            feedback_parts.append(f"[DỊCH CÂU HỎI]\n{q['stem_vi']}")
+        feedback_parts.append(f"[DỊCH CÁC ĐÁP ÁN]\n{opts_vi_text}")
+        feedback_parts.append(f"[GIẢI THÍCH CHI TIẾT]\n{exp_vi}")
         if q.get("knowledge_ref"):
-            feedback_parts.append(f"📌 Kiến thức: {q['knowledge_ref']}")
+            feedback_parts.append(f"Tham chiếu: {q['knowledge_ref']}")
         full_feedback = "\n\n".join(feedback_parts)[:1850]
 
         payload.append(
